@@ -1,0 +1,4 @@
+project_id = "lckxrcmhmjkeirtikyrb"
+
+[functions.cleanup-deleted-users]
+verify_jwt = false
