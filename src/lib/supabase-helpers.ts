@@ -25,7 +25,7 @@ export async function getDiscoverableProfiles(userId: string) {
 
   const { data } = await supabase
     .from("profiles")
-    .select("id, name, age, gender, bio, photos, role, verified")
+    .select("id, name, age, gender, bio, photos, role, verified, startup_name, industry, startup_stage, funding_needed, short_pitch, pitch_deck_url, investment_range_min, investment_range_max, preferred_industries, stage_preference, skills, experience, interested_roles")
     .eq("status", "active")
     .not("id", "in", `(${excludeIds.join(",")})`)
     .not("name", "eq", "")
@@ -63,7 +63,7 @@ export async function getMatches(userId: string) {
 export async function getMatchProfile(matchUserId: string) {
   const { data } = await supabase
     .from("profiles")
-    .select("id, name, age, gender, bio, photos, role, verified")
+    .select("id, name, age, gender, bio, photos, role, verified, startup_name, industry, startup_stage, funding_needed, short_pitch, pitch_deck_url, investment_range_min, investment_range_max, preferred_industries, stage_preference, skills, experience, interested_roles")
     .eq("id", matchUserId)
     .single();
   return data;
