@@ -215,15 +215,28 @@ export type Database = {
           bio: string | null
           created_at: string
           deletion_request_date: string | null
+          experience: string | null
+          funding_needed: number | null
           gender: string | null
           id: string
+          industry: string | null
+          interested_roles: string[] | null
+          investment_range_max: number | null
+          investment_range_min: number | null
           latitude: number | null
           longitude: number | null
           name: string
           phone_number: string
           photos: Json | null
+          pitch_deck_url: string | null
+          preferred_industries: string[] | null
           role: string | null
           scheduled_deletion_date: string | null
+          short_pitch: string | null
+          skills: string[] | null
+          stage_preference: string | null
+          startup_name: string | null
+          startup_stage: string | null
           status: Database["public"]["Enums"]["profile_status"]
           updated_at: string
           verified: boolean | null
@@ -233,15 +246,28 @@ export type Database = {
           bio?: string | null
           created_at?: string
           deletion_request_date?: string | null
+          experience?: string | null
+          funding_needed?: number | null
           gender?: string | null
           id: string
+          industry?: string | null
+          interested_roles?: string[] | null
+          investment_range_max?: number | null
+          investment_range_min?: number | null
           latitude?: number | null
           longitude?: number | null
           name?: string
           phone_number?: string
           photos?: Json | null
+          pitch_deck_url?: string | null
+          preferred_industries?: string[] | null
           role?: string | null
           scheduled_deletion_date?: string | null
+          short_pitch?: string | null
+          skills?: string[] | null
+          stage_preference?: string | null
+          startup_name?: string | null
+          startup_stage?: string | null
           status?: Database["public"]["Enums"]["profile_status"]
           updated_at?: string
           verified?: boolean | null
@@ -251,15 +277,28 @@ export type Database = {
           bio?: string | null
           created_at?: string
           deletion_request_date?: string | null
+          experience?: string | null
+          funding_needed?: number | null
           gender?: string | null
           id?: string
+          industry?: string | null
+          interested_roles?: string[] | null
+          investment_range_max?: number | null
+          investment_range_min?: number | null
           latitude?: number | null
           longitude?: number | null
           name?: string
           phone_number?: string
           photos?: Json | null
+          pitch_deck_url?: string | null
+          preferred_industries?: string[] | null
           role?: string | null
           scheduled_deletion_date?: string | null
+          short_pitch?: string | null
+          skills?: string[] | null
+          stage_preference?: string | null
+          startup_name?: string | null
+          startup_stage?: string | null
           status?: Database["public"]["Enums"]["profile_status"]
           updated_at?: string
           verified?: boolean | null

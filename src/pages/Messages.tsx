@@ -47,7 +47,7 @@ const Messages = () => {
               type: "match",
               userId: otherId,
               userName: profile.name || "Unknown",
-              userPhoto: Array.isArray(profile.photos) ? profile.photos[0] : undefined,
+              userPhoto: Array.isArray(profile.photos) ? String(profile.photos[0]) : undefined,
               lastMessage: "Match conversation",
               lastMessageTime: new Date(match.created_at).toLocaleDateString(),
             });
@@ -81,7 +81,7 @@ const Messages = () => {
               type: "direct",
               userId: otherId,
               userName: profile.name || "Unknown",
-              userPhoto: Array.isArray(profile.photos) ? profile.photos[0] : undefined,
+              userPhoto: Array.isArray(profile.photos) ? String(profile.photos[0]) : undefined,
               lastMessage: lastMsg.message || "No message",
               lastMessageTime: new Date(lastMsg.created_at).toLocaleDateString(),
             });
