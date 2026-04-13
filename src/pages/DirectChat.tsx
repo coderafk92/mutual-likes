@@ -107,31 +107,8 @@ const DirectChat = () => {
       .finally(() => setSending(false));
   };
 
-  const handleAddReaction = async (messageId: string, emoji: string) => {
-    if (!user) return;
-    try {
-      const { data: msgData } = await supabase
-        .from("direct_messages")
-        .select("reactions")
-        .eq("id", messageId)
-        .single();
-
-      const reactions = msgData?.reactions || {};
-      if (!reactions[emoji]) reactions[emoji] = [];
-      
-      if (reactions[emoji].includes(user.id)) {
-        reactions[emoji] = reactions[emoji].filter((id: string) => id !== user.id);
-      } else {
-        reactions[emoji].push(user.id);
-      }
-
-      await supabase
-        .from("direct_messages")
-        .update({ reactions })
-        .eq("id", messageId);
-    } catch (err) {
-      console.error("Error adding reaction:", err);
-    }
+  const handleAddReaction = async (_messageId: string, _emoji: string) => {
+    toast.error("Reactions coming soon!");
   };
 
   if (loading) {
