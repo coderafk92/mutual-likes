@@ -388,6 +388,60 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_discoverable_profiles: {
+        Args: { _exclude_ids: string[] }
+        Returns: {
+          age: number
+          bio: string
+          experience: string
+          funding_needed: number
+          gender: string
+          id: string
+          industry: string
+          interested_roles: string[]
+          investment_range_max: number
+          investment_range_min: number
+          name: string
+          photos: Json
+          pitch_deck_url: string
+          preferred_industries: string[]
+          role: string
+          short_pitch: string
+          skills: string[]
+          stage_preference: string
+          startup_name: string
+          startup_stage: string
+          status: Database["public"]["Enums"]["profile_status"]
+          verified: boolean
+        }[]
+      }
+      get_public_profile: {
+        Args: { _profile_id: string }
+        Returns: {
+          age: number
+          bio: string
+          experience: string
+          funding_needed: number
+          gender: string
+          id: string
+          industry: string
+          interested_roles: string[]
+          investment_range_max: number
+          investment_range_min: number
+          name: string
+          photos: Json
+          pitch_deck_url: string
+          preferred_industries: string[]
+          role: string
+          short_pitch: string
+          skills: string[]
+          stage_preference: string
+          startup_name: string
+          startup_stage: string
+          status: Database["public"]["Enums"]["profile_status"]
+          verified: boolean
+        }[]
+      }
       handle_swipe: {
         Args: {
           p_direction: Database["public"]["Enums"]["swipe_direction"]
