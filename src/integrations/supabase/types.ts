@@ -45,10 +45,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "direct_messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "direct_messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "direct_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -81,10 +95,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "follows_following_id_fkey"
             columns: ["following_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follows_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -123,10 +151,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "friendships_addressee_id_fkey"
+            columns: ["addressee_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "friendships_requester_id_fkey"
             columns: ["requester_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -162,10 +204,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matches_user1_id_fkey"
+            columns: ["user1_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "matches_user2_id_fkey"
             columns: ["user2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user2_id_fkey"
+            columns: ["user2_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -205,6 +261,13 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -336,10 +399,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "reports_reported_id_fkey"
+            columns: ["reported_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "reports_reporter_id_fkey"
             columns: ["reporter_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -375,17 +452,108 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "swipes_swiped_id_fkey"
+            columns: ["swiped_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "swipes_swiper_id_fkey"
             columns: ["swiper_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "swipes_swiper_id_fkey"
+            columns: ["swiper_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          age: number | null
+          bio: string | null
+          created_at: string | null
+          experience: string | null
+          funding_needed: number | null
+          gender: string | null
+          id: string | null
+          industry: string | null
+          interested_roles: string[] | null
+          investment_range_max: number | null
+          investment_range_min: number | null
+          name: string | null
+          photos: Json | null
+          pitch_deck_url: string | null
+          preferred_industries: string[] | null
+          role: string | null
+          short_pitch: string | null
+          skills: string[] | null
+          stage_preference: string | null
+          startup_name: string | null
+          startup_stage: string | null
+          status: Database["public"]["Enums"]["profile_status"] | null
+          verified: boolean | null
+        }
+        Insert: {
+          age?: number | null
+          bio?: string | null
+          created_at?: string | null
+          experience?: string | null
+          funding_needed?: number | null
+          gender?: string | null
+          id?: string | null
+          industry?: string | null
+          interested_roles?: string[] | null
+          investment_range_max?: number | null
+          investment_range_min?: number | null
+          name?: string | null
+          photos?: Json | null
+          pitch_deck_url?: string | null
+          preferred_industries?: string[] | null
+          role?: string | null
+          short_pitch?: string | null
+          skills?: string[] | null
+          stage_preference?: string | null
+          startup_name?: string | null
+          startup_stage?: string | null
+          status?: Database["public"]["Enums"]["profile_status"] | null
+          verified?: boolean | null
+        }
+        Update: {
+          age?: number | null
+          bio?: string | null
+          created_at?: string | null
+          experience?: string | null
+          funding_needed?: number | null
+          gender?: string | null
+          id?: string | null
+          industry?: string | null
+          interested_roles?: string[] | null
+          investment_range_max?: number | null
+          investment_range_min?: number | null
+          name?: string | null
+          photos?: Json | null
+          pitch_deck_url?: string | null
+          preferred_industries?: string[] | null
+          role?: string | null
+          short_pitch?: string | null
+          skills?: string[] | null
+          stage_preference?: string | null
+          startup_name?: string | null
+          startup_stage?: string | null
+          status?: Database["public"]["Enums"]["profile_status"] | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       handle_swipe: {
