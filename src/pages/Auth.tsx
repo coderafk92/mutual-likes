@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Phone, ArrowRight, Shield, Mail, Lock, UserPlus, LogIn, Briefcase } from "lucide-react";
+import { Phone, ArrowRight, Shield, Mail, Lock, UserPlus, LogIn, Rocket } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import logoImg from "@/assets/logo.png";
+import authBg from "@/assets/auth-bg.jpg";
 
 const countryCodes = [
   { code: "+1", country: "US", flag: "🇺🇸", label: "United States" },
@@ -107,6 +109,30 @@ const countryCodes = [
 type PhoneStep = "phone" | "otp";
 type EmailMode = "login" | "signup";
 
+const FloatingParticle = ({ delay, x, y, size }: { delay: number; x: string; y: string; size: number }) => (
+  <motion.div
+    className="absolute rounded-full"
+    style={{
+      left: x,
+      top: y,
+      width: size,
+      height: size,
+      background: `radial-gradient(circle, hsl(185 100% 50% / 0.4), transparent)`,
+    }}
+    animate={{
+      y: [-10, 10, -10],
+      opacity: [0.3, 0.7, 0.3],
+      scale: [1, 1.2, 1],
+    }}
+    transition={{
+      duration: 4 + Math.random() * 2,
+      repeat: Infinity,
+      delay,
+      ease: "easeInOut",
+    }}
+  />
+);
+
 const Auth = () => {
   const [authMethod, setAuthMethod] = useState<"phone" | "email">("email");
   const [phoneStep, setPhoneStep] = useState<PhoneStep>("phone");
@@ -132,7 +158,7 @@ const Auth = () => {
         toast.error(`Failed to sign in with ${provider}: ${result.error.message}`);
       }
       if (result.redirected) return;
-    } catch (err) {
+    } catch {
       toast.error(`Something went wrong with ${provider} sign in`);
     } finally {
       setSocialLoading(null);
@@ -216,296 +242,342 @@ const Auth = () => {
     }
   };
 
+  const inputClass = "pl-11 h-14 text-base rounded-xl border-border/50 bg-muted/40 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/30 transition-all";
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
+    <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
+      {/* Background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${authBg})` }}
+      />
+      <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
+
+      {/* Floating particles */}
+      <FloatingParticle delay={0} x="10%" y="20%" size={6} />
+      <FloatingParticle delay={1} x="80%" y="15%" size={4} />
+      <FloatingParticle delay={2} x="70%" y="70%" size={8} />
+      <FloatingParticle delay={0.5} x="20%" y="80%" size={5} />
+      <FloatingParticle delay={1.5} x="90%" y="50%" size={3} />
+      <FloatingParticle delay={3} x="50%" y="10%" size={6} />
+
+      {/* Main card */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm space-y-8"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-md mx-4"
       >
-        {/* Logo */}
-        <div className="text-center space-y-3">
-          <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="inline-flex items-center justify-center w-20 h-20 rounded-full gradient-primary shadow-elevated"
-          >
-            <Briefcase className="w-10 h-10 text-primary-foreground" />
-          </motion.div>
-          <h1 className="text-3xl font-extrabold text-foreground">MyStartupFunds</h1>
-          <p className="text-muted-foreground">Connect founders, investors & professionals</p>
-        </div>
+        <div className="glass rounded-3xl p-8 space-y-6 shadow-elevated">
+          {/* Logo */}
+          <div className="text-center space-y-3">
+            <motion.div
+              animate={{ y: [-4, 4, -4] }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+              className="inline-block"
+            >
+              <img
+                src={logoImg}
+                alt="MyStartupFunds Logo"
+                width={80}
+                height={80}
+                className="mx-auto drop-shadow-[0_0_20px_hsl(185_100%_50%_/_0.4)]"
+              />
+            </motion.div>
+            <h1 className="text-3xl font-bold font-display tracking-wider text-gradient">
+              MyStartupFunds
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Connect founders, investors & professionals
+            </p>
+          </div>
 
-        {/* Auth Method Tabs */}
-        <Tabs value={authMethod} onValueChange={(v) => setAuthMethod(v as "phone" | "email")} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-muted">
-            <TabsTrigger value="email" className="rounded-lg text-sm font-medium data-[state=active]:bg-card data-[state=active]:shadow-sm gap-1.5">
-              <Mail className="w-4 h-4" />
-              Email
-            </TabsTrigger>
-            <TabsTrigger value="phone" className="rounded-lg text-sm font-medium data-[state=active]:bg-card data-[state=active]:shadow-sm gap-1.5">
-              <Phone className="w-4 h-4" />
-              Phone
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Email Auth */}
-          <TabsContent value="email" className="mt-4">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={emailMode}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-4"
+          {/* Auth Tabs */}
+          <Tabs value={authMethod} onValueChange={(v) => setAuthMethod(v as "phone" | "email")} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-muted/50 backdrop-blur-sm border border-border/30">
+              <TabsTrigger
+                value="email"
+                className="rounded-lg text-sm font-medium data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_15px_hsl(185_100%_50%_/_0.15)] gap-1.5 transition-all"
               >
-                <div className="space-y-3">
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-foreground">Email</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        type="email"
-                        placeholder="you@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="pl-11 h-14 text-lg rounded-xl border-border bg-card"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-foreground">Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="pl-11 h-14 text-lg rounded-xl border-border bg-card"
-                      />
-                    </div>
-                  </div>
-                  {emailMode === "signup" && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="space-y-1.5"
-                    >
-                      <label className="text-sm font-medium text-foreground">Confirm Password</label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="pl-11 h-14 text-lg rounded-xl border-border bg-card"
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
+                <Mail className="w-4 h-4" />
+                Email
+              </TabsTrigger>
+              <TabsTrigger
+                value="phone"
+                className="rounded-lg text-sm font-medium data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_15px_hsl(185_100%_50%_/_0.15)] gap-1.5 transition-all"
+              >
+                <Phone className="w-4 h-4" />
+                Phone
+              </TabsTrigger>
+            </TabsList>
 
-                <Button
-                  onClick={emailMode === "login" ? handleEmailLogin : handleEmailSignup}
-                  disabled={loading}
-                  className="w-full h-14 text-lg font-semibold rounded-xl gradient-primary text-primary-foreground border-0 shadow-elevated hover:opacity-90 transition-opacity"
-                >
-                  {loading ? (
-                    emailMode === "login" ? "Signing in..." : "Creating account..."
-                  ) : (
-                    <>
-                      {emailMode === "login" ? (
-                        <>
-                          <LogIn className="mr-2 w-5 h-5" />
-                          Sign In
-                        </>
-                      ) : (
-                        <>
-                          <UserPlus className="mr-2 w-5 h-5" />
-                          Create Account
-                        </>
-                      )}
-                    </>
-                  )}
-                </Button>
-
-                <button
-                  onClick={() => {
-                    setEmailMode(emailMode === "login" ? "signup" : "login");
-                    setConfirmPassword("");
-                  }}
-                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {emailMode === "login"
-                    ? "Don't have an account? Sign up"
-                    : "Already have an account? Sign in"}
-                </button>
-
-                {emailMode === "login" && (
-                  <Link
-                    to="/forgot-password"
-                    className="block w-full text-sm text-center text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Forgot your password?
-                  </Link>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </TabsContent>
-
-          {/* Phone Auth */}
-          <TabsContent value="phone" className="mt-4">
-            <AnimatePresence mode="wait">
-              {phoneStep === "phone" ? (
+            {/* Email Auth */}
+            <TabsContent value="email" className="mt-4">
+              <AnimatePresence mode="wait">
                 <motion.div
-                  key="phone"
+                  key={emailMode}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   className="space-y-4"
                 >
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Phone Number</label>
-                    <div className="flex gap-2">
-                      <Select value={`${countryCode}-${selectedCountry.country}`} onValueChange={(val) => setCountryCode(val.split("-")[0])}>
-                        <SelectTrigger className="w-[120px] h-14 rounded-xl border-border bg-card text-base">
-                          <SelectValue>
-                            <span className="flex items-center gap-1.5">
-                              <span>{selectedCountry.flag}</span>
-                              <span className="text-sm">{countryCode}</span>
-                            </span>
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent className="max-h-[300px]">
-                          {countryCodes.map((c) => (
-                            <SelectItem key={`${c.code}-${c.country}`} value={`${c.code}-${c.country}`}>
-                              <span className="flex items-center gap-2">
-                                <span>{c.flag}</span>
-                                <span className="text-sm">{c.label}</span>
-                                <span className="text-muted-foreground text-xs">{c.code}</span>
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="tel"
-                        placeholder="Phone number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="flex-1 h-14 text-lg rounded-xl border-border bg-card"
-                      />
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-foreground/80">Email</label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
+                        <Input
+                          type="email"
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className={inputClass}
+                        />
+                      </div>
                     </div>
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-foreground/80">Password</label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                    {emailMode === "signup" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-1.5"
+                      >
+                        <label className="text-sm font-medium text-foreground/80">Confirm Password</label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className={inputClass}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
 
                   <Button
-                    onClick={handleSendOtp}
+                    onClick={emailMode === "login" ? handleEmailLogin : handleEmailSignup}
                     disabled={loading}
-                    className="w-full h-14 text-lg font-semibold rounded-xl gradient-primary text-primary-foreground border-0 shadow-elevated hover:opacity-90 transition-opacity"
+                    className="w-full h-14 text-base font-semibold rounded-xl gradient-primary text-primary-foreground border-0 shadow-elevated hover:opacity-90 transition-all hover:shadow-[0_0_30px_hsl(185_100%_50%_/_0.35)]"
                   >
-                    {loading ? "Sending..." : (
+                    {loading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full"
+                      />
+                    ) : (
                       <>
-                        Send Code
-                        <ArrowRight className="ml-2 w-5 h-5" />
+                        {emailMode === "login" ? (
+                          <>
+                            <LogIn className="mr-2 w-5 h-5" />
+                            Sign In
+                          </>
+                        ) : (
+                          <>
+                            <UserPlus className="mr-2 w-5 h-5" />
+                            Create Account
+                          </>
+                        )}
                       </>
                     )}
                   </Button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="otp"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-4"
-                >
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Verification Code</label>
-                    <p className="text-xs text-muted-foreground">
-                      Sent to {countryCode}{phone}
-                    </p>
-                    <div className="relative">
-                      <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        type="text"
-                        placeholder="000000"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                        className="pl-11 h-14 text-lg tracking-[0.5em] text-center rounded-xl border-border bg-card"
-                        maxLength={6}
-                      />
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={handleVerifyOtp}
-                    disabled={loading}
-                    className="w-full h-14 text-lg font-semibold rounded-xl gradient-primary text-primary-foreground border-0 shadow-elevated hover:opacity-90 transition-opacity"
-                  >
-                    {loading ? "Verifying..." : "Verify & Continue"}
-                  </Button>
 
                   <button
-                    onClick={() => setPhoneStep("phone")}
-                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => {
+                      setEmailMode(emailMode === "login" ? "signup" : "login");
+                      setConfirmPassword("");
+                    }}
+                    className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    Change phone number
+                    {emailMode === "login"
+                      ? "Don't have an account? Sign up"
+                      : "Already have an account? Sign in"}
                   </button>
+
+                  {emailMode === "login" && (
+                    <Link
+                      to="/forgot-password"
+                      className="block w-full text-sm text-center text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      Forgot your password?
+                    </Link>
+                  )}
                 </motion.div>
+              </AnimatePresence>
+            </TabsContent>
+
+            {/* Phone Auth */}
+            <TabsContent value="phone" className="mt-4">
+              <AnimatePresence mode="wait">
+                {phoneStep === "phone" ? (
+                  <motion.div
+                    key="phone"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    className="space-y-4"
+                  >
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground/80">Phone Number</label>
+                      <div className="flex gap-2">
+                        <Select value={`${countryCode}-${selectedCountry.country}`} onValueChange={(val) => setCountryCode(val.split("-")[0])}>
+                          <SelectTrigger className="w-[120px] h-14 rounded-xl border-border/50 bg-muted/40 backdrop-blur-sm text-base">
+                            <SelectValue>
+                              <span className="flex items-center gap-1.5">
+                                <span>{selectedCountry.flag}</span>
+                                <span className="text-sm">{countryCode}</span>
+                              </span>
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px] glass border-border/30">
+                            {countryCodes.map((c) => (
+                              <SelectItem key={`${c.code}-${c.country}`} value={`${c.code}-${c.country}`}>
+                                <span className="flex items-center gap-2">
+                                  <span>{c.flag}</span>
+                                  <span className="text-sm">{c.label}</span>
+                                  <span className="text-muted-foreground text-xs">{c.code}</span>
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          type="tel"
+                          placeholder="Phone number"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="flex-1 h-14 text-base rounded-xl border-border/50 bg-muted/40 backdrop-blur-sm"
+                        />
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handleSendOtp}
+                      disabled={loading}
+                      className="w-full h-14 text-base font-semibold rounded-xl gradient-primary text-primary-foreground border-0 shadow-elevated hover:opacity-90 transition-all hover:shadow-[0_0_30px_hsl(185_100%_50%_/_0.35)]"
+                    >
+                      {loading ? "Sending..." : (
+                        <>
+                          Send Code
+                          <ArrowRight className="ml-2 w-5 h-5" />
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="otp"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="space-y-4"
+                  >
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground/80">Verification Code</label>
+                      <p className="text-xs text-muted-foreground">
+                        Sent to {countryCode}{phone}
+                      </p>
+                      <div className="relative">
+                        <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
+                        <Input
+                          type="text"
+                          placeholder="000000"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                          className={`${inputClass} tracking-[0.5em] text-center`}
+                          maxLength={6}
+                        />
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handleVerifyOtp}
+                      disabled={loading}
+                      className="w-full h-14 text-base font-semibold rounded-xl gradient-primary text-primary-foreground border-0 shadow-elevated hover:opacity-90 transition-all hover:shadow-[0_0_30px_hsl(185_100%_50%_/_0.35)]"
+                    >
+                      {loading ? "Verifying..." : "Verify & Continue"}
+                    </Button>
+
+                    <button
+                      onClick={() => setPhoneStep("phone")}
+                      className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      Change phone number
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </TabsContent>
+          </Tabs>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            <span className="text-xs text-muted-foreground uppercase tracking-widest font-display">or</span>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+          </div>
+
+          {/* Social Login */}
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => handleSocialLogin("google")}
+              disabled={!!socialLoading}
+              className="flex-1 h-12 rounded-xl border-border/40 bg-muted/30 hover:bg-primary/10 hover:border-primary/30 gap-2 text-sm font-medium backdrop-blur-sm transition-all"
+            >
+              {socialLoading === "google" ? (
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-4 h-4 border-2 border-muted-foreground/30 border-t-primary rounded-full" />
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  Google
+                </>
               )}
-            </AnimatePresence>
-          </TabsContent>
-        </Tabs>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleSocialLogin("apple")}
+              disabled={!!socialLoading}
+              className="flex-1 h-12 rounded-xl border-border/40 bg-muted/30 hover:bg-primary/10 hover:border-primary/30 gap-2 text-sm font-medium backdrop-blur-sm transition-all"
+            >
+              {socialLoading === "apple" ? (
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-4 h-4 border-2 border-muted-foreground/30 border-t-primary rounded-full" />
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-foreground" aria-hidden="true">
+                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                  </svg>
+                  Apple
+                </>
+              )}
+            </Button>
+          </div>
 
-        {/* Divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">or continue with</span>
-          <div className="flex-1 h-px bg-border" />
-        </div>
-
-        {/* Social Login Buttons */}
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={() => handleSocialLogin("google")}
-            disabled={!!socialLoading}
-            className="flex-1 h-12 rounded-xl border-border bg-card hover:bg-muted gap-2 text-sm font-medium"
-          >
-            {socialLoading === "google" ? (
-              "..."
-            ) : (
-              <>
-                <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                Google
-              </>
-            )}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleSocialLogin("apple")}
-            disabled={!!socialLoading}
-            className="flex-1 h-12 rounded-xl border-border bg-card hover:bg-muted gap-2 text-sm font-medium"
-          >
-            {socialLoading === "apple" ? (
-              "..."
-            ) : (
-              <>
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-foreground" aria-hidden="true">
-                  <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-                Apple
-              </>
-            )}
-          </Button>
+          {/* Footer */}
+          <p className="text-center text-xs text-muted-foreground/60">
+            Secured with enterprise-grade encryption
+          </p>
         </div>
       </motion.div>
     </div>
