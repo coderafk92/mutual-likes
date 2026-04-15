@@ -118,8 +118,26 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
   const selectedCountry = countryCodes.find((c) => c.code === countryCode) || countryCodes[0];
+
+  const handleSocialLogin = async (provider: "google" | "apple") => {
+    setSocialLoading(provider);
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error(`Failed to sign in with ${provider}: ${result.error.message}`);
+      }
+      if (result.redirected) return;
+    } catch (err) {
+      toast.error(`Something went wrong with ${provider} sign in`);
+    } finally {
+      setSocialLoading(null);
+    }
+  };
 
   const handleSendOtp = async () => {
     if (!phone || phone.length < 6) {
